@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, abort
 
 class Bike:
     def __init__(self, id, name, price, size, type):
@@ -39,6 +39,8 @@ def get_one_bike(bike_id):
         bike_id = int(bike_id)
     except ValueError:
         response_str = f"Invalid bike_id: `{bike_id}`. ID must be an integer"
+        abort(400)
+        
         return jsonify({"message": response_str}), 400
     #after the try-except: bike_id will be a valid int
 
@@ -53,9 +55,10 @@ def get_one_bike(bike_id):
                 "size": bike.size,
                 "type": bike.type
                 }
-            #return in the if block
+            #return in the if block: return only in the case of a matching Bike's id to the input
             return jsonify(bike_dict), 200
         
     #after the loop: the bike with matching bike_id was not found, we will raise 404 error with message
+    abort(404)
     response_message = f"Could not find bike with ID {bike_id}"
     return jsonify({"message":response_message}), 404
