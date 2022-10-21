@@ -1,5 +1,5 @@
 
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, abort, make_response
 
 class Journal:
     def __init__(self, id, design, dye_color = "canyon tan", size = "A6", design_details = None):
@@ -26,13 +26,42 @@ journal_bp = Blueprint("journal_bp" , __name__, url_prefix = "/journal")
 def get_all_journals():
     response = []
     for journal in journals:
-        journal_dict = {
+        journal_dict = make_journal_dict(journal)
+        response.append(journal_dict)
+    
+    return jsonify(response), 200  #this is the status code that will come back. 
+
+def make_journal_dict(journal):
+    """given a journal, return a dictionary with all the info for that journal."""
+    journal_dict = {
             "id" : journal.id,
             "design" : journal.design,
             "dye color": journal.dye_color,
             "size": journal.size,
             "design_details": journal.design_details
         }
-        response.append(journal_dict)
+    return journal_dict
+
+
+#now we'll make a route to return a journal with a specific id
+@journal_bp.route("/<journal_id>", methods = ["GET"])
+def get_journal_by_id(journal_id):
+    journal = validate_journal(journal_id)
+    journal_dict = make_journal_dict(journal)
+    return journal_dict
+
+
+def validate_journal(journal_id):
+    #if journal_id entered is an int, keep going.  if not, return 400 code for invalid input.
+    try:
+        journal_id = int(journal_id)
+    except:
+        abort(make_response({"message": f"journal {journal_id} is invalid"}, 400))
+
+    #if journal id isn't found, return 404 not found.
+    for journal in journals:
+        if journal.id == journal_id:
+            return journal
+    abort(make_response({"message": f"journal {journal_id} not found"}, 404))
+
     
-    return jsonify(response), 200  #this is the status code that will come back. 
