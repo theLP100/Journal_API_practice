@@ -29,3 +29,33 @@ def get_all_bikes():
         }
         response.append(bike_dict)
     return jsonify(response), 200
+
+
+@bike_bp.route("/<bike_id>", methods=["GET"])
+def get_one_bike(bike_id):
+    #see if bike_id can be converted to an integer
+    #try-except: try to convert to an int, if error occurs, catch it and raise 400 error with message
+    try:
+        bike_id = int(bike_id)
+    except ValueError:
+        response_str = f"Invalid bike_id: `{bike_id}`. ID must be an integer"
+        return jsonify({"message": response_str}), 400
+    #after the try-except: bike_id will be a valid int
+
+    #looping through data to find a bike with matching bike_id
+    #if found: return that bike's data with 200 response code
+    for bike in bikes:
+        if bike.id == bike_id:
+            bike_dict = {
+                "id": bike.id,
+                "name": bike.name,
+                "price": bike.price,
+                "size": bike.size,
+                "type": bike.type
+                }
+            #return in the if block
+            return jsonify(bike_dict), 200
+        
+    #after the loop: the bike with matching bike_id was not found, we will raise 404 error with message
+    response_message = f"Could not find bike with ID {bike_id}"
+    return jsonify({"message":response_message}), 404
