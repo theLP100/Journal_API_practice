@@ -1,23 +1,29 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
+from app import db
+from app.models.bike import Bike
 
-class Bike:
-    def __init__(self, id, name, price, size, type):
-        self.id = id
-        self.name = name
-        self.price = price
-        self.size = size
-        self.type = type
-
-bikes = [
-    Bike(5, "Nina", 100, 48, "gravel"),
-    Bike(8, "Bike 3000", 1000, 50, "hybrid"),
-    Bike(2, "Auberon", 2000, 52, "electonic")
-]
 
 bike_bp = Blueprint("bike_bp", __name__, url_prefix="/bike")
 
+@bike_bp.route("", methods=["POST"])
+def add_bike():
+    request_body = request.get_json()
+
+    new_bike = Bike(
+        name=request_body["name"],
+        price=request_body["price"],
+        size=request_body["size"],
+        type=request_body["type"]
+    )
+
+    db.session.add(new_bike)
+    db.session.commit()
+
+    return {"id": new_bike.id}, 201
+
 @bike_bp.route("", methods=["GET"])
 def get_all_bikes():
+    bikes = Bike.query.all()
     response = []
     for bike in bikes:
         bike_dict = {
@@ -31,31 +37,31 @@ def get_all_bikes():
     return jsonify(response), 200
 
 
-@bike_bp.route("/<bike_id>", methods=["GET"])
-def get_one_bike(bike_id):
-    #see if bike_id can be converted to an integer
-    #try-except: try to convert to an int, if error occurs, catch it and raise 400 error with message
-    try:
-        bike_id = int(bike_id)
-    except ValueError:
-        response_str = f"Invalid bike_id: `{bike_id}`. ID must be an integer"
-        return jsonify({"message": response_str}), 400
-    #after the try-except: bike_id will be a valid int
+# @bike_bp.route("/<bike_id>", methods=["GET"])
+# def get_one_bike(bike_id):
+#     #see if bike_id can be converted to an integer
+#     #try-except: try to convert to an int, if error occurs, catch it and raise 400 error with message
+#     try:
+#         bike_id = int(bike_id)
+#     except ValueError:
+#         response_str = f"Invalid bike_id: `{bike_id}`. ID must be an integer"
+#         return jsonify({"message": response_str}), 400
+#     #after the try-except: bike_id will be a valid int
 
-    #looping through data to find a bike with matching bike_id
-    #if found: return that bike's data with 200 response code
-    for bike in bikes:
-        if bike.id == bike_id:
-            bike_dict = {
-                "id": bike.id,
-                "name": bike.name,
-                "price": bike.price,
-                "size": bike.size,
-                "type": bike.type
-                }
-            #return in the if block
-            return jsonify(bike_dict), 200
+#     #looping through data to find a bike with matching bike_id
+#     #if found: return that bike's data with 200 response code
+#     for bike in bikes:
+#         if bike.id == bike_id:
+#             bike_dict = {
+#                 "id": bike.id,
+#                 "name": bike.name,
+#                 "price": bike.price,
+#                 "size": bike.size,
+#                 "type": bike.type
+#                 }
+#             #return in the if block
+#             return jsonify(bike_dict), 200
         
-    #after the loop: the bike with matching bike_id was not found, we will raise 404 error with message
-    response_message = f"Could not find bike with ID {bike_id}"
-    return jsonify({"message":response_message}), 404
+#     #after the loop: the bike with matching bike_id was not found, we will raise 404 error with message
+#     response_message = f"Could not find bike with ID {bike_id}"
+#     return jsonify({"message":response_message}), 404
