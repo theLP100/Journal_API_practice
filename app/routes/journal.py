@@ -6,32 +6,33 @@ from app.models.journal import Journal
 journal_bp = Blueprint("journal_bp" , __name__, url_prefix = "/journal")
 
 #THIS ISN'T WORKING YET'nonetype isn't scriptable'
-@journal_bp.route("", methods = ["GET", "POST"])
-def handle_journals():
-    if request.method == "POST":
-        request_body = request.get_json()
-
-        new_journal = Journal(
-            design = request_body["design"],
-            sub_design = request_body["sub_design"],
-            cut = request_body["cut"],
-            complete = request_body["complete"],
-            size = request_body["size"],
-            dye = request_body["dye"],
-            dye_gradient = request_body["dye_gradient"]
-        )
-
-        db.session.add(new_journal)
-        db.session.commit()
-        return {"id": new_journal.id}, 201
+@journal_bp.route("", methods = [ "POST"])
+def create_journal():
     
-    elif request.method == "GET":
-        journals = Journal.query.all()
-        response = []
-        for journal in journals:
-            journal_dict = make_journal_dict(journal)
-            response.append(journal_dict)
-        return jsonify(response), 200  
+    request_body = request.get_json()
+
+    new_journal = Journal(
+        design = request_body["design"],
+        sub_design = request_body["sub_design"],
+        cut = request_body["cut"],
+        complete = request_body["complete"],
+        size = request_body["size"],
+        dye = request_body["dye"],
+        dye_gradient = request_body["dye_gradient"]
+    )
+
+    db.session.add(new_journal)
+    db.session.commit()
+    return {"id": new_journal.id}, 201
+    
+@journal_bp.route("", methods = ["GET"])
+def read_all_journals():
+    journals = Journal.query.all()
+    response = []
+    for journal in journals:
+        journal_dict = make_journal_dict(journal)
+        response.append(journal_dict)
+    return jsonify(response), 200  
 
 def make_journal_dict(journal):
     """given a journal, return a dictionary with all the info for that journal."""
