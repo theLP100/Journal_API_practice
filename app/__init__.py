@@ -17,6 +17,9 @@ def create_app():
     #if the below isn't working, change 5432 to 127.0.0.1
     app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql+psycopg2://postgres:postgres@localhost:5432/journals_development"
 
+    #you have to import this before db.init_app(app)
+    from app.models.journal import Journal
+
     #this is where we connect our database to our application.
     db.init_app(app)
     #migrate will generate ways to set up our database.
