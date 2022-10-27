@@ -1,23 +1,24 @@
 
 from flask import Blueprint, jsonify, abort, make_response
+# no longer need the class.
+# class Journal:
+#     def __init__(self, id, design, dye_color = "canyon tan", size = "A6", design_details = None, cut = True, complete = True):
+#         self.id = id
+#         self.design = design
+#         self.dye_color = dye_color
+#         self.size = size
+#         self.design_details = design_details
+#         self.cut = cut
+#         self.complete = complete
 
-class Journal:
-    def __init__(self, id, design, dye_color = "canyon tan", size = "A6", design_details = None):
-        self.id = id
-        self.design = design
-        self.dye_color = dye_color
-        self.size = size
-        self.design_details = design_details
-
-journals= [
-    Journal(1, "tree of life"),
-    Journal(2, "trefoil"),
-    Journal(3, "dragon"),
-    Journal(4, "astrology", design_details= "aries"),
-    Journal(5, "constellation"),
-    Journal(6, "astrology", design_details = "virgo")
-
-]
+# journals= [
+#     Journal(1, "tree of life"),
+#     Journal(2, "trefoil"),
+#     Journal(3, "dragon"),
+#     Journal(4, "astrology", design_details= "aries"),
+#     Journal(5, "constellation"),
+#     Journal(6, "astrology", design_details = "virgo")
+# ]
 
 journal_bp = Blueprint("journal_bp" , __name__, url_prefix = "/journal")
 
@@ -28,7 +29,6 @@ def get_all_journals():
     for journal in journals:
         journal_dict = make_journal_dict(journal)
         response.append(journal_dict)
-    
     return jsonify(response), 200  #this is the status code that will come back. 
 
 def make_journal_dict(journal):
@@ -38,9 +38,10 @@ def make_journal_dict(journal):
             "design" : journal.design,
             "dye color": journal.dye_color,
             "size": journal.size,
-            "design_details": journal.design_details
+            "design_details": journal.design_details,
+            "cut": journal.cut,
+            "complete": journal.complete
         }
-    
     return journal_dict
 
 
