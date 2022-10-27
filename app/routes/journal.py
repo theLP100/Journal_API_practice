@@ -40,6 +40,7 @@ def make_journal_dict(journal):
             "size": journal.size,
             "design_details": journal.design_details
         }
+    
     return journal_dict
 
 
@@ -48,7 +49,7 @@ def make_journal_dict(journal):
 def get_journal_by_id(journal_id):
     journal = validate_journal(journal_id)
     journal_dict = make_journal_dict(journal)
-    return journal_dict
+    return jsonify(journal_dict), 200
 
 
 def validate_journal(journal_id):
