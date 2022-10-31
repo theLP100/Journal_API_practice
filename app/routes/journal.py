@@ -10,7 +10,6 @@ journal_bp = Blueprint("journal_bp" , __name__, url_prefix = "/journal")
 def create_journal():
     
     request_body = request.get_json()
-
     new_journal = Journal(
         design = request_body["design"],
         sub_design = request_body["sub_design"],

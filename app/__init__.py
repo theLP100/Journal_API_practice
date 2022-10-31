@@ -14,7 +14,7 @@ def create_app():
     app = Flask(__name__)
     #configuration is a dictionary: we're setting key-value pairs.
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    #if the below isn't working, change 5432 to 127.0.0.1
+    #if the below isn't working, change localhost to 127.0.0.1
     app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql+psycopg2://postgres:postgres@localhost:5432/journals_development"
 
     #you have to import this before db.init_app(app)
