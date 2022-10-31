@@ -11,7 +11,14 @@ journal_bp = Blueprint("journal_bp" , __name__, url_prefix = "/journal")
 def create_journal():
     
     request_body = request.get_json()
-    #can I refator this? how to put in default values if none entered?
+    #can I refactor this? how to put in default values if none entered?
+    #try to make a list of fields so you can iterate thorugh them.
+    #make a dict of fields with defaults. 
+    if "dye_gradient" not in request_body:
+        dye_gradient = False
+    else:
+        dye_gradient = request_body["dye_gradient"]
+    
     new_journal = Journal(
         design = request_body["design"],
         sub_design = request_body["sub_design"],
@@ -19,8 +26,11 @@ def create_journal():
         complete = request_body["complete"],
         size = request_body["size"],
         dye = request_body["dye"],
-        dye_gradient = request_body["dye_gradient"]
+        dye_gradient = dye_gradient
     )
+    #go through entered fields: if it has an entry, use that, if not, use the default.
+    # if "cut" not in request_body:
+    #     Journal.cut = True
 
     db.session.add(new_journal)
     db.session.commit()
@@ -29,6 +39,8 @@ def create_journal():
 @journal_bp.route("", methods = ["GET"])
 def read_all_journals():
     design_query = request.args.get("design")
+    #FIGURE OUT A WAY THAT I CAN QUERY FOR WHATEVER I WANT
+    #it's going to be a bunch of if checks.
     if design_query:
         journals = Journal.query.filter_by(design = design_query)
     else:
@@ -54,6 +66,7 @@ def update_journal(journal_id):
 
     #refactor this to make smaller.
     #how can we make this so that the request body doesn't need to be the entire entry?? 
+    #I'll try looking up things about PATCH.
     if "design" not in request_body or \
         "sub_design" not in request_body or \
         "cut" not in request_body or \
