@@ -54,6 +54,16 @@ def update_journal(journal_id):
 
     #refactor this to make smaller.
     #how can we make this so that the request body doesn't need to be the entire entry?? 
+    if "design" not in request_body or \
+        "sub_design" not in request_body or \
+        "cut" not in request_body or \
+        "complete" not in request_body or \
+        "size" not in request_body or \
+        "dye" not in request_body or \
+        "dye_gradient" not in request_body:
+            return jsonify({"message": "Request must include design, sub_design, cut, complete, size, dye, and dye_gradient"}), 400
+
+
     journal.design = request_body["design"]
     journal.sub_design = request_body["sub_design"]
     journal.cut = request_body["cut"]
@@ -64,7 +74,7 @@ def update_journal(journal_id):
 
     db.session.commit()
 
-    return make_response(f"Journal #{journal_id} successfully updated")
+    return make_response(f"Journal #{journal_id} successfully updated"), 200
 
 
 @journal_bp.route("/<journal_id>", methods = ["DELETE"])
