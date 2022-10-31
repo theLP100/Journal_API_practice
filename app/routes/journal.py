@@ -35,9 +35,20 @@ def read_all_journals():
 
 @journal_bp.route("/<journal_id>", methods = ["GET"])
 def get_one_journal(journal_id):
-    journal = Journal.query.get(journal_id)
+    journal = validate_journal(journal_id)
     journal_dict = make_journal_dict(journal)
     return journal_dict
+
+def validate_journal(journal_id):
+    try:
+        journal_id = int(journal_id)
+    except:
+        abort(make_response({"message": f"Journal {journal_id} invalid"}, 400))
+    journal = Journal.query.get(journal_id)
+    if not journal:
+        abort(make_response({"message":f"Journal {journal_id} not found"}, 404))
+
+    return journal
 
 def make_journal_dict(journal):
     """given a journal, return a dictionary with all the info for that journal."""
