@@ -28,7 +28,12 @@ def create_journal():
     
 @journal_bp.route("", methods = ["GET"])
 def read_all_journals():
-    journals = Journal.query.all()
+    design_query = request.args.get("design")
+    if design_query:
+        journals = Journal.query.filter_by(design = design_query)
+    else:
+        journals = Journal.query.all()
+    
     response = []
     for journal in journals:
         journal_dict = make_journal_dict(journal)
