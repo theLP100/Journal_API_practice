@@ -73,7 +73,7 @@ def update_journal(journal_id):
     journal.dye_gradient = request_body["dye_gradient"]
 
     db.session.commit()
-
+    #the 200 might need to be inside the parens.
     return make_response(f"Journal #{journal_id} successfully updated"), 200
 
 
@@ -83,7 +83,7 @@ def delete_journal(journal_id):
     db.session.delete(journal)
     db.session.commit()
 
-    return make_response(f"Journal #{journal_id} successfully deleted")
+    return make_response(f"Journal #{journal_id} successfully deleted"), 200
 
 def validate_journal(journal_id):
     try:
