@@ -30,15 +30,4 @@ def create_app():
     from .routes.journal import journal_bp
     app.register_blueprint(journal_bp)
 
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-    app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql+psycopg2://postgres:postgres@localhost:5432/bikes_development"
-
-    from app.models.bike import Bike
-
-    db.init_app(app)
-    migrate.init_app(app, db)
-
-    from .routes.bike import bike_bp
-    app.register_blueprint(bike_bp)
-
     return app
