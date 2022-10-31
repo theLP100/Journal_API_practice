@@ -5,11 +5,12 @@ from app.models.journal import Journal
 
 journal_bp = Blueprint("journal_bp" , __name__, url_prefix = "/journal")
 
-#THIS ISN'T WORKING YET'nonetype isn't scriptable'
+
 @journal_bp.route("", methods = [ "POST"])
 def create_journal():
     
     request_body = request.get_json()
+    #can I refator this? how to put in default values if none entered?
     new_journal = Journal(
         design = request_body["design"],
         sub_design = request_body["sub_design"],
@@ -38,6 +39,26 @@ def get_one_journal(journal_id):
     journal = validate_journal(journal_id)
     journal_dict = make_journal_dict(journal)
     return journal_dict
+
+
+@journal_bp.route("/<journal_id>", methods = ["PUT"])
+def update_journal(journal_id):
+    journal = validate_journal(journal_id)
+    request_body = request.get_json()
+
+    #refactor this to make smaller.
+    #how can we make this so that the request body doesn't need to be the entire entry?? 
+    journal.design = request_body["design"]
+    journal.sub_design = request_body["sub_design"]
+    journal.cut = request_body["cut"]
+    journal.complete = request_body["complete"]
+    journal.size = request_body["size"]
+    journal.dye = request_body["dye"]
+    journal.dye_gradient = request_body["dye_gradient"]
+
+    db.session.commit()
+
+    return make_response(f"Journal #{journal_id} successfully updated")
 
 def validate_journal(journal_id):
     try:
