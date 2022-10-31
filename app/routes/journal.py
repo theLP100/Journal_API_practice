@@ -44,7 +44,7 @@ def read_all_journals():
 def get_one_journal(journal_id):
     journal = validate_journal(journal_id)
     journal_dict = make_journal_dict(journal)
-    return journal_dict
+    return jsonify(journal_dict), 200
 
 
 @journal_bp.route("/<journal_id>", methods = ["PUT"])
@@ -89,10 +89,12 @@ def validate_journal(journal_id):
     try:
         journal_id = int(journal_id)
     except:
-        abort(make_response({"message": f"Journal {journal_id} invalid"}, 400))
+        response_str = f"Journal {journal_id} invalid"
+        abort(make_response({"message": response_str}, 400))
     journal = Journal.query.get(journal_id)
     if not journal:
-        abort(make_response({"message":f"Journal {journal_id} not found"}, 404))
+        response_str = f"Journal {journal_id} not found"
+        abort(make_response({"message":response_str}, 404))
 
     return journal
 
