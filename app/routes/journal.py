@@ -1,4 +1,5 @@
 
+
 from flask import Blueprint, jsonify, abort, make_response, request
 from app import db
 from app.models.journal import Journal
@@ -59,6 +60,15 @@ def update_journal(journal_id):
     db.session.commit()
 
     return make_response(f"Journal #{journal_id} successfully updated")
+
+
+@journal_bp.route("/<journal_id>", methods = ["DELETE"])
+def delete_journal(journal_id):
+    journal = validate_journal(journal_id)
+    db.session.delete(journal)
+    db.session.commit()
+
+    return make_response(f"Journal #{journal_id} successfully deleted")
 
 def validate_journal(journal_id):
     try:
