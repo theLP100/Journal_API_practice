@@ -33,6 +33,12 @@ def read_all_journals():
         response.append(journal_dict)
     return jsonify(response), 200  
 
+@journal_bp.route("/<journal_id>", methods = ["GET"])
+def get_one_journal(journal_id):
+    journal = Journal.query.get(journal_id)
+    journal_dict = make_journal_dict(journal)
+    return journal_dict
+
 def make_journal_dict(journal):
     """given a journal, return a dictionary with all the info for that journal."""
     journal_dict = {
