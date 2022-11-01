@@ -11,23 +11,43 @@ journal_bp = Blueprint("journal_bp" , __name__, url_prefix = "/journal")
 def create_journal():
     
     request_body = request.get_json()
-    #can I refactor this? how to put in default values if none entered?
+    #TASK 1: make this work with only certain values entered.
     #try to make a list of fields so you can iterate thorugh them.
     #make a dict of fields with defaults. 
-    if "dye_gradient" not in request_body:
-        dye_gradient = False
-    else:
-        dye_gradient = request_body["dye_gradient"]
+
+    col_names = [design, sub_design, cut, complete, size, dye, dye_gradient]
+    col_defaults = [None, "", True, True, 'A6', 'canyon tan', False]
+    col_names_defaults_dict = dict(zip(col_names, col_defaults))
+
+    #unfortnuately I think this is modifying col_names_default_dict.  that's no good. 
+    for field, default in col_names_defaults_dict.items():
+        if str(field) not in request_body:
+            field = default
+        else:
+            field = request_body[str(field)]
+    # if "dye_gradient" not in request_body:
+    #     dye_gradient = False
+    # else:
+    #     dye_gradient = request_body["dye_gradient"]
+
+    # new_journal = Journal(
+    #     design = request_body["design"],
+    #     sub_design = request_body["sub_design"],
+    #     cut = request_body["cut"],
+    #     complete = request_body["complete"],
+    #     size = request_body["size"],
+    #     dye = request_body["dye"],
+    #     dye_gradient = dye_gradient
+    # )
+    #NOW, HOW CAN I USE WHAT I DID ABOVE HERE?
     
     new_journal = Journal(
-        design = request_body["design"],
-        sub_design = request_body["sub_design"],
-        cut = request_body["cut"],
-        complete = request_body["complete"],
-        size = request_body["size"],
-        dye = request_body["dye"],
-        dye_gradient = dye_gradient
+        design = col_names_defaults_dict[design],
+        sub_design = col_names_defaults_dict[sub_design],
+        cut = col_names_defaults_dict[cut]
+
     )
+    
     #go through entered fields: if it has an entry, use that, if not, use the default.
     # if "cut" not in request_body:
     #     Journal.cut = True
@@ -40,7 +60,7 @@ def create_journal():
 def read_all_journals():
     design_query = request.args.get("design")
     #FIGURE OUT A WAY THAT I CAN QUERY FOR WHATEVER I WANT
-    #it's going to be a bunch of if checks.
+    #it's going to be a bunch of if checks. #check about this.
     if design_query:
         journals = Journal.query.filter_by(design = design_query)
     else:
