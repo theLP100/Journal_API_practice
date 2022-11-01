@@ -2,6 +2,7 @@
 from flask import Flask  
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from dotenv import load_dotenv
 
 #db is an instance of SQLAlchemy class.  this is how we interat with our database.
 #these are in the global scope!
@@ -9,6 +10,7 @@ db = SQLAlchemy()
 #migrate is saying how we configure the database.  how do we get to something (our database)
 #with the relations we want.
 migrate = Migrate()
+load_dotenv()
 
 def create_app():
     # __name__ stores the name of the module we're in
