@@ -11,24 +11,101 @@ journal_bp = Blueprint("journal_bp" , __name__, url_prefix = "/journal")
 def create_journal():
     
     request_body = request.get_json()
-    #TASK 1: make this work with only certain values entered.
-    #try to make a list of fields so you can iterate thorugh them.
-    #make a dict of fields with defaults. 
 
-    col_names = [design, sub_design, cut, complete, size, dye, dye_gradient]
-    col_defaults = [None, "", True, True, 'A6', 'canyon tan', False]
-    col_names_defaults_dict = dict(zip(col_names, col_defaults))
+    lst_of_field_values = fill_empties_with_defaults(request_body)
+    
+    new_journal = make_new_journal(lst_of_field_values)
+
+    db.session.add(new_journal)
+    db.session.commit()
+    return {"id": new_journal.id}, 201
+    
+def make_new_journal(lst_of_field_values):
+    #refactor this so it uses a for loop!  (also so it works in any order.  MAKE A DICT INSTEAD.)
+    new_journal = Journal(
+        design = lst_of_field_values[0],
+        sub_design = lst_of_field_values[1],
+        cut = lst_of_field_values[2],
+        complete = lst_of_field_values[3],
+        size = lst_of_field_values[4],
+        dye = lst_of_field_values[5],
+        dye_gradient = lst_of_field_values[6]
+    )
+    return new_journal
+
+
+def fill_empties_with_defaults(request_body):
+    #go through entered fields: if it has an entry, use that, if not, use the default.
+    #
+    #I KNOW there has to be a way to do this in a for loop.  we'll get it eventually. 
+    #see end of function for  my notes on this.
+    lst_of_field_values = [] 
+
+    design = request_body["design"]
+    lst_of_field_values.append(design)
+
+    if "sub_design" not in request_body:
+        sub_design = ""
+    else:
+        sub_design = request_body["sub_design"]
+    lst_of_field_values.append(sub_design)
+
+    if "cut" not in request_body:
+        cut = True
+    else:
+        cut = request_body['cut']
+    lst_of_field_values.append(cut)
+
+    if "complete" not in request_body:
+        complete = True
+    else:
+        complete = request_body['complete']
+    lst_of_field_values.append(complete)
+
+    if "size" not in request_body:
+        size = 'A6'
+    else:
+        size = request_body['size']
+    lst_of_field_values.append(size)
+    
+    if 'dye' not in request_body:
+        dye = 'canyon tan'
+    else:
+        dye = request_body['dye']
+    lst_of_field_values.append(dye)
+
+    if "dye_gradient" not in request_body:
+        dye_gradient = False
+    else:
+        dye_gradient = request_body["dye_gradient"]
+    lst_of_field_values.append(dye_gradient)
+
+    #return a list of values for each field that we'll put in a journal.  (each function should do ONE thing)
+    #CONSIDER MAKING THIS A DICT INSTEAD, WITH KEY BEING THE NAME OF THE FIELD AND VALUE BEING THE VALUE.
+    return lst_of_field_values
+
+    #here's my notes trying to do this in a for loop with a dictionary.
+    # 
+    # col_names = [design, sub_design, cut, complete, size, dye, dye_gradient]
+    # col_defaults = [None, "", True, True, 'A6', 'canyon tan', False]
+    # col_names_defaults_dict = dict(zip(col_names, col_defaults))
 
     #unfortnuately I think this is modifying col_names_default_dict.  that's no good. 
-    for field, default in col_names_defaults_dict.items():
-        if str(field) not in request_body:
-            field = default
-        else:
-            field = request_body[str(field)]
-    # if "dye_gradient" not in request_body:
-    #     dye_gradient = False
-    # else:
-    #     dye_gradient = request_body["dye_gradient"]
+    # for field, default in col_names_defaults_dict.items():
+    #     if str(field) not in request_body:
+    #         field = default
+    #     else:
+    #         field = request_body[str(field)]
+
+    ##NOW, HOW CAN I USE WHAT I DID ABOVE HERE?
+    # new_journal = Journal(
+    #     design = col_names_defaults_dict[design],
+    #     sub_design = col_names_defaults_dict[sub_design],
+    #     cut = col_names_defaults_dict[cut]
+
+    # )
+    #-----------------------------------------------------------------
+    #old way:
 
     # new_journal = Journal(
     #     design = request_body["design"],
@@ -39,28 +116,12 @@ def create_journal():
     #     dye = request_body["dye"],
     #     dye_gradient = dye_gradient
     # )
-    #NOW, HOW CAN I USE WHAT I DID ABOVE HERE?
-    
-    new_journal = Journal(
-        design = col_names_defaults_dict[design],
-        sub_design = col_names_defaults_dict[sub_design],
-        cut = col_names_defaults_dict[cut]
 
-    )
-    
-    #go through entered fields: if it has an entry, use that, if not, use the default.
-    # if "cut" not in request_body:
-    #     Journal.cut = True
-
-    db.session.add(new_journal)
-    db.session.commit()
-    return {"id": new_journal.id}, 201
-    
 @journal_bp.route("", methods = ["GET"])
 def read_all_journals():
     design_query = request.args.get("design")
     #FIGURE OUT A WAY THAT I CAN QUERY FOR WHATEVER I WANT
-    #it's going to be a bunch of if checks. #check about this.
+    #it's going to be a bunch of if checks. #OR can I make a variable for this????figure this out.
     if design_query:
         journals = Journal.query.filter_by(design = design_query)
     else:
