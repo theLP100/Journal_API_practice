@@ -24,3 +24,15 @@ def test_get_one_book(client, two_saved_journals):
         "dye": "canyon tan",
         "dye_gradient": False
     }
+
+def test_create_one_book(client):
+    #Act
+    response = client.post("/journal", json={
+        "design": "astrology",
+        "sub_design": "taurus"
+    })
+    response_body = response.get_json()
+
+    #Assert
+    assert response.status_code == 201
+    assert response_body == {"id": 1}
