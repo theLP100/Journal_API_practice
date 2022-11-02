@@ -24,11 +24,20 @@ def create_journal():
 
 @journal_bp.route("", methods = ["GET"])
 def read_all_journals():
+    #THIS IS DICTIONARY:
+    #the keys of the dictionary are what design = DESIGN _QUERY below
+    #look up DOUBLE SPLAT OPERATOR #dictionary splat. 
+    # fake_dict = {
+    #     "a": "stra"
+    #     "b": "bstrb"
+    # }
+
     design_query = request.args.get("design")
     #FIGURE OUT A WAY THAT I CAN QUERY FOR WHATEVER I WANT
     #it's going to be a bunch of if checks. #OR can I make a variable for this????figure this out.
     if design_query:
-        journals = Journal.query.filter_by(design = design_query)
+        journals = Journal.query.filter_by(design = design_query) 
+        #**fake_dict)  #this will splat out the dict!!!!
     else:
         journals = Journal.query.all()
     
