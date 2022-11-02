@@ -1,4 +1,4 @@
-
+#todo: make your returns a consistent style. (make_response(jsonify)) perhaps...
 
 from textwrap import fill
 from flask import Blueprint, jsonify, abort, make_response, request
