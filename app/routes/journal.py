@@ -7,6 +7,10 @@ from app.models.journal import Journal
 
 journal_bp = Blueprint("journal_bp" , __name__, url_prefix = "/journal")
 
+#constants: (col names and defaults):
+col_names = ["design", "sub_design", "cut", "complete", "size", "dye", "dye_gradient"]
+col_defaults = [None, "", True, True, 'A6', 'canyon tan', False]
+COL_NAME_DEFAULT_DICT = dict(zip(col_names, col_defaults))
 
 @journal_bp.route("", methods = [ "POST"])
 def create_journal():
@@ -24,7 +28,7 @@ def create_journal():
 
 @journal_bp.route("", methods = ["GET"])
 def read_all_journals():
-    
+    #goal: query whatever I want.
     #THIS IS DICTIONARY:
     #the keys of the dictionary are what design = DESIGN _QUERY below
     #look up DOUBLE SPLAT OPERATOR #dictionary splat. 
@@ -60,8 +64,6 @@ def update_journal(journal_id):
     journal = validate_journal(journal_id)
     request_body = request.get_json()
 
-    #how can we make this so that the request body doesn't need to be the entire entry?? 
-    #I'll try looking up things about PATCH.
     #LATER MAKE THIS A HELPER FUNCTION and a for loop (careful with mutable values).  JUST GET IT WORKING FOR NOW.
     #if <field> in request_body, journal.field = request_body['field']
 
@@ -139,19 +141,12 @@ def make_new_journal(dict_of_field_values):
     )
     return new_journal
 
-
 def fill_empties_with_defaults(request_body):
     #go through entered fields: if it has an entry, use that, if not, use the default.
-    #
-    #I KNOW there has to be a way to do this in a for loop.  we'll get it eventually. 
-    #see end of function for  my notes on this.
-
-    col_names = ["design", "sub_design", "cut", "complete", "size", "dye", "dye_gradient"]
-    col_defaults = [None, "", True, True, 'A6', 'canyon tan', False]
-    col_names_defaults_dict = dict(zip(col_names, col_defaults))
+    #maybe we can put these as constants on the top that can be referenced by all the functions? 
 
     journal_dict = {}
-    for field, default in col_names_defaults_dict.items():
+    for field, default in COL_NAME_DEFAULT_DICT.items():
         
         if field not in request_body:
             journal_dict[field] = default
@@ -159,88 +154,4 @@ def fill_empties_with_defaults(request_body):
             journal_dict[field] = request_body[field]
 
     return journal_dict
-
-    # if "sub_design" not in request_body:
-    #     sub_design = ""
-    # else:
-    #     sub_design = request_body["sub_design"]
-    # lst_of_field_values.append(sub_design)
-
-    # if "cut" not in request_body:
-    #     cut = True
-    # else:
-    #     cut = request_body['cut']
-    # lst_of_field_values.append(cut)
-
-    # if "complete" not in request_body:
-    #     complete = True
-    # else:
-    #     complete = request_body['complete']
-    # lst_of_field_values.append(complete)
-
-    # if "size" not in request_body:
-    #     size = 'A6'
-    # else:
-    #     size = request_body['size']
-    # lst_of_field_values.append(size)
     
-    # if 'dye' not in request_body:
-    #     dye = 'canyon tan'
-    # else:
-    #     dye = request_body['dye']
-    # lst_of_field_values.append(dye)
-
-    # if "dye_gradient" not in request_body:
-    #     dye_gradient = False
-    # else:
-    #     dye_gradient = request_body["dye_gradient"]
-    # lst_of_field_values.append(dye_gradient)
-
-    #return a list of values for each field that we'll put in a journal.  (each function should do ONE thing)
-    #CONSIDER MAKING THIS A DICT INSTEAD, WITH KEY BEING THE NAME OF THE FIELD AND VALUE BEING THE VALUE.
-    #return lst_of_field_values
-
-    #here's my notes trying to do this in a for loop with a dictionary.
-    # 
-    
-
-    #unfortnuately I think this is modifying col_names_default_dict.  that's no good. 
-    #MAKE A DICT OF VALUES FOR EACH JOURNAL OBJECT
-    #LOOP THROUGH EACH FIELD AND PUT IN DEFAULT IF IT'S NOT THERE.
-    # journal_dict = {}
-    # for field, default in col_names_defaults_dict.items():
-        
-    #     if field not in request_body:
-    #         journal_dict[field] = default
-    #     else:
-    #         journal_dict[field] = request_body[field]
-
-    ##NOW, HOW CAN I USE WHAT I DID ABOVE HERE?
-    # new_journal = Journal(
-    #     design = col_names_defaults_dict[design],
-    #     sub_design = col_names_defaults_dict[sub_design],
-    #     cut = col_names_defaults_dict[cut]
-
-    # )
-    #-----------------------------------------------------------------
-    #old way:
-
-    # new_journal = Journal(
-    #     design = request_body["design"],
-    #     sub_design = request_body["sub_design"],
-    #     cut = request_body["cut"],
-    #     complete = request_body["complete"],
-    #     size = request_body["size"],
-    #     dye = request_body["dye"],
-    #     dye_gradient = dye_gradient
-    # )
-
-    #old code from 'put':
-    # if "design" not in request_body or \
-    #     "sub_design" not in request_body or \
-    #     "cut" not in request_body or \
-    #     "complete" not in request_body or \
-    #     "size" not in request_body or \
-    #     "dye" not in request_body or \
-    #     "dye_gradient" not in request_body:
-    #         return jsonify({"message": "Request must include design, sub_design, cut, complete, size, dye, and dye_gradient"}), 400
