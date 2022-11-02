@@ -1,4 +1,4 @@
-def test_get_all_journals_with_no_records(client):
+def test_get_all_journals_with_empty_db_returns_empty_list(client):
     #act
     response = client.get("/journal")
     response_body = response.get_json()

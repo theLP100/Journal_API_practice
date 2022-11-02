@@ -8,9 +8,9 @@ from app.models.journal import Journal
 journal_bp = Blueprint("journal_bp" , __name__, url_prefix = "/journal")
 
 #constants: (col names and defaults):
-col_names = ["design", "sub_design", "cut", "complete", "size", "dye", "dye_gradient"]
-col_defaults = [None, "", True, True, 'A6', 'canyon tan', False]
-COL_NAME_DEFAULT_DICT = dict(zip(col_names, col_defaults))
+COL_NAMES = ["design", "sub_design", "cut", "complete", "size", "dye", "dye_gradient"]
+COL_DEFAULTS = [None, "", True, True, 'A6', 'canyon tan', False]
+COL_NAME_DEFAULT_DICT = dict(zip(COL_NAMES, COL_DEFAULTS))
 
 @journal_bp.route("", methods = [ "POST"])
 def create_journal():
@@ -29,6 +29,7 @@ def create_journal():
 @journal_bp.route("", methods = ["GET"])
 def read_all_journals():
     #goal: query whatever I want.
+    #it's going to be a bunch of if checks. #OR can I make a variable for this????figure this out.
     #THIS IS DICTIONARY:
     #the keys of the dictionary are what design = DESIGN _QUERY below
     #look up DOUBLE SPLAT OPERATOR #dictionary splat. 
@@ -38,8 +39,7 @@ def read_all_journals():
     # }
 
     design_query = request.args.get("design")
-    #FIGURE OUT A WAY THAT I CAN QUERY FOR WHATEVER I WANT
-    #it's going to be a bunch of if checks. #OR can I make a variable for this????figure this out.
+    
     if design_query:
         journals = Journal.query.filter_by(design = design_query) 
         #**fake_dict)  #this will splat out the dict!!!!
@@ -66,6 +66,10 @@ def update_journal(journal_id):
 
     #LATER MAKE THIS A HELPER FUNCTION and a for loop (careful with mutable values).  JUST GET IT WORKING FOR NOW.
     #if <field> in request_body, journal.field = request_body['field']
+
+    # for field in COL_NAMES:
+    #     if field in request_body:
+            
 
     if "design" in request_body:
         journal.design = request_body["design"]
