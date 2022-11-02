@@ -25,7 +25,19 @@ def test_get_one_book(client, two_saved_journals):
         "dye_gradient": False
     }
 
-def test_create_one_book(client):
+def test_post_one_journal_into_empty_database_gives_id_1(client):
+    response = client.post("/journal", json = {
+        "design": "pheonix",
+        "dye_gradient": True,
+        "dye" : "red"
+    })
+
+    response_body = response.get_json()
+
+    assert response.status_code == 201
+    assert response_body == {"id": 1}
+
+def test_post_one_journal_creates_one_journal_with_new_id_in_db(client, two_saved_journals):
     #Act
     response = client.post("/journal", json={
         "design": "astrology",
@@ -35,4 +47,4 @@ def test_create_one_book(client):
 
     #Assert
     assert response.status_code == 201
-    assert response_body == {"id": 1}
+    assert response_body == {"id": 3}

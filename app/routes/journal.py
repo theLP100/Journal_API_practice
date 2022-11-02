@@ -48,15 +48,15 @@ def read_all_journals():
     
     response = []
     for journal in journals:
-        journal_dict = make_journal_dict(journal)
+        journal_dict = journal.make_journal_dict()
         response.append(journal_dict)
     return jsonify(response), 200  
 
 @journal_bp.route("/<journal_id>", methods = ["GET"])
 def get_one_journal(journal_id):
     journal = validate_journal(journal_id)
-    journal_dict = make_journal_dict(journal)
-    return jsonify(journal_dict), 200
+    journal_dict = journal.make_journal_dict()
+    return journal_dict, 200
 
 #make put or patch!
 @journal_bp.route("/<journal_id>", methods = ["PUT", "PATCH"])
@@ -117,20 +117,6 @@ def validate_journal(journal_id):
         abort(make_response({"message":response_str}, 404))
 
     return journal
-
-def make_journal_dict(journal):
-    """given a journal, return a dictionary with all the info for that journal."""
-    journal_dict = {
-            "id" : journal.id,
-            "design" : journal.design,
-            "sub_design" : journal.sub_design,
-            "cut": journal.cut,
-            "complete": journal.complete,
-            "size": journal.size,
-            "dye": journal.dye,
-            "dye_gradient": journal.dye_gradient
-        }
-    return journal_dict
 
 #put this in model.journal as a method on the class.  Journal.make_new_journal
 def make_new_journal(dict_of_field_values):
