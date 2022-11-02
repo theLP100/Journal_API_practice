@@ -24,6 +24,7 @@ def create_journal():
 
 @journal_bp.route("", methods = ["GET"])
 def read_all_journals():
+    
     #THIS IS DICTIONARY:
     #the keys of the dictionary are what design = DESIGN _QUERY below
     #look up DOUBLE SPLAT OPERATOR #dictionary splat. 
