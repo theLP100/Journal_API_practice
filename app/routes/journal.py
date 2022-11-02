@@ -13,9 +13,9 @@ def create_journal():
     
     request_body = request.get_json()
 
-    lst_of_field_values = fill_empties_with_defaults(request_body)
+    dict_of_field_values = fill_empties_with_defaults(request_body)
     
-    new_journal = make_new_journal(lst_of_field_values)
+    new_journal = make_new_journal(dict_of_field_values)
 
     db.session.add(new_journal)
     db.session.commit()
@@ -54,8 +54,8 @@ def get_one_journal(journal_id):
     journal_dict = make_journal_dict(journal)
     return jsonify(journal_dict), 200
 
-
-@journal_bp.route("/<journal_id>", methods = ["PUT"])
+#make put or patch!
+@journal_bp.route("/<journal_id>", methods = ["PUT", "PATCH"])
 def update_journal(journal_id):
     journal = validate_journal(journal_id)
     request_body = request.get_json()
@@ -126,16 +126,16 @@ def make_journal_dict(journal):
         }
     return journal_dict
 
-def make_new_journal(lst_of_field_values):
-    #refactor this so it uses a for loop!  (also so it works in any order.  MAKE A DICT INSTEAD.)
+#put this in model.journal as a method on the class.  Journal.make_new_journal
+def make_new_journal(dict_of_field_values):
     new_journal = Journal(
-        design = lst_of_field_values[0],
-        sub_design = lst_of_field_values[1],
-        cut = lst_of_field_values[2],
-        complete = lst_of_field_values[3],
-        size = lst_of_field_values[4],
-        dye = lst_of_field_values[5],
-        dye_gradient = lst_of_field_values[6]
+        design = dict_of_field_values["design"],
+        sub_design = dict_of_field_values["sub_design"],
+        cut = dict_of_field_values["cut"],
+        complete = dict_of_field_values["complete"],
+        size = dict_of_field_values["size"],
+        dye = dict_of_field_values["dye"],
+        dye_gradient = dict_of_field_values["dye_gradient"]
     )
     return new_journal
 
@@ -145,63 +145,75 @@ def fill_empties_with_defaults(request_body):
     #
     #I KNOW there has to be a way to do this in a for loop.  we'll get it eventually. 
     #see end of function for  my notes on this.
-    lst_of_field_values = [] 
 
-    design = request_body["design"]
-    lst_of_field_values.append(design)
+    col_names = ["design", "sub_design", "cut", "complete", "size", "dye", "dye_gradient"]
+    col_defaults = [None, "", True, True, 'A6', 'canyon tan', False]
+    col_names_defaults_dict = dict(zip(col_names, col_defaults))
 
-    if "sub_design" not in request_body:
-        sub_design = ""
-    else:
-        sub_design = request_body["sub_design"]
-    lst_of_field_values.append(sub_design)
+    journal_dict = {}
+    for field, default in col_names_defaults_dict.items():
+        
+        if field not in request_body:
+            journal_dict[field] = default
+        else:
+            journal_dict[field] = request_body[field]
 
-    if "cut" not in request_body:
-        cut = True
-    else:
-        cut = request_body['cut']
-    lst_of_field_values.append(cut)
+    return journal_dict
 
-    if "complete" not in request_body:
-        complete = True
-    else:
-        complete = request_body['complete']
-    lst_of_field_values.append(complete)
+    # if "sub_design" not in request_body:
+    #     sub_design = ""
+    # else:
+    #     sub_design = request_body["sub_design"]
+    # lst_of_field_values.append(sub_design)
 
-    if "size" not in request_body:
-        size = 'A6'
-    else:
-        size = request_body['size']
-    lst_of_field_values.append(size)
+    # if "cut" not in request_body:
+    #     cut = True
+    # else:
+    #     cut = request_body['cut']
+    # lst_of_field_values.append(cut)
+
+    # if "complete" not in request_body:
+    #     complete = True
+    # else:
+    #     complete = request_body['complete']
+    # lst_of_field_values.append(complete)
+
+    # if "size" not in request_body:
+    #     size = 'A6'
+    # else:
+    #     size = request_body['size']
+    # lst_of_field_values.append(size)
     
-    if 'dye' not in request_body:
-        dye = 'canyon tan'
-    else:
-        dye = request_body['dye']
-    lst_of_field_values.append(dye)
+    # if 'dye' not in request_body:
+    #     dye = 'canyon tan'
+    # else:
+    #     dye = request_body['dye']
+    # lst_of_field_values.append(dye)
 
-    if "dye_gradient" not in request_body:
-        dye_gradient = False
-    else:
-        dye_gradient = request_body["dye_gradient"]
-    lst_of_field_values.append(dye_gradient)
+    # if "dye_gradient" not in request_body:
+    #     dye_gradient = False
+    # else:
+    #     dye_gradient = request_body["dye_gradient"]
+    # lst_of_field_values.append(dye_gradient)
 
     #return a list of values for each field that we'll put in a journal.  (each function should do ONE thing)
     #CONSIDER MAKING THIS A DICT INSTEAD, WITH KEY BEING THE NAME OF THE FIELD AND VALUE BEING THE VALUE.
-    return lst_of_field_values
+    #return lst_of_field_values
 
     #here's my notes trying to do this in a for loop with a dictionary.
     # 
-    # col_names = [design, sub_design, cut, complete, size, dye, dye_gradient]
-    # col_defaults = [None, "", True, True, 'A6', 'canyon tan', False]
-    # col_names_defaults_dict = dict(zip(col_names, col_defaults))
+    
 
     #unfortnuately I think this is modifying col_names_default_dict.  that's no good. 
+    #MAKE A DICT OF VALUES FOR EACH JOURNAL OBJECT
+    #LOOP THROUGH EACH FIELD AND PUT IN DEFAULT IF IT'S NOT THERE.
+    # journal_dict = {}
     # for field, default in col_names_defaults_dict.items():
-    #     if str(field) not in request_body:
-    #         field = default
+        
+    #     if field not in request_body:
+    #         journal_dict[field] = default
     #     else:
-    #         field = request_body[str(field)]
+    #         journal_dict[field] = request_body[field]
 
     ##NOW, HOW CAN I USE WHAT I DID ABOVE HERE?
     # new_journal = Journal(
