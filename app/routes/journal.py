@@ -63,34 +63,8 @@ def get_one_journal(journal_id):
 def update_journal(journal_id):
     journal = validate_journal(journal_id)
     request_body = request.get_json()
-
-    #LATER MAKE THIS A HELPER FUNCTION and a for loop (careful with mutable values).  JUST GET IT WORKING FOR NOW.
-    #if <field> in request_body, journal.field = request_body['field']
-
-    # for field in COL_NAMES:
-    #     if field in request_body:
             
-
-    if "design" in request_body:
-        journal.design = request_body["design"]
-
-    if "sub_design" in request_body:
-        journal.sub_design = request_body["sub_design"]
-
-    if "cut" in request_body:
-        journal.cut = request_body["cut"]
-
-    if "complete" in request_body:
-        journal.complete = request_body["complete"]
-
-    if "size" in request_body:
-        journal.size = request_body["size"]
-
-    if "dye" in request_body:
-        journal.dye = request_body["dye"]
-
-    if "dye_gradient" in request_body:
-        journal.dye_gradient = request_body["dye_gradient"]
+    journal = update_given_values(journal, request_body)
 
     db.session.commit()
     #the 200 might need to be inside the parens.
@@ -118,7 +92,7 @@ def validate_journal(journal_id):
 
     return journal
 
-#put this in model.journal as a method on the class.  Journal.make_new_journal
+#put this in model.journal as a method on the class.  Journal.make_new_journal ??(is this possible?)
 def make_new_journal(dict_of_field_values):
     new_journal = Journal(
         design = dict_of_field_values["design"],
@@ -133,8 +107,7 @@ def make_new_journal(dict_of_field_values):
 
 def fill_empties_with_defaults(request_body):
     #go through entered fields: if it has an entry, use that, if not, use the default.
-    #maybe we can put these as constants on the top that can be referenced by all the functions? 
-
+    
     journal_dict = {}
     for field, default in COL_NAME_DEFAULT_DICT.items():
         
@@ -144,4 +117,35 @@ def fill_empties_with_defaults(request_body):
             journal_dict[field] = request_body[field]
 
     return journal_dict
+
+def update_given_values(journal, request_body):
+    """this updates the values given by request_body, and keeps the other values the same that aren't provided."""
+    #is there a way to make this a loop?
+    #if <field> in request_body, journal.field = request_body['field']
+
+    # for field in COL_NAMES:
+    #     if field in request_body:
+    if "design" in request_body:
+        journal.design = request_body["design"]
+
+    if "sub_design" in request_body:
+        journal.sub_design = request_body["sub_design"]
+
+    if "cut" in request_body:
+        journal.cut = request_body["cut"]
+
+    if "complete" in request_body:
+        journal.complete = request_body["complete"]
+
+    if "size" in request_body:
+        journal.size = request_body["size"]
+
+    if "dye" in request_body:
+        journal.dye = request_body["dye"]
+
+    if "dye_gradient" in request_body:
+        journal.dye_gradient = request_body["dye_gradient"]
+    
+    return journal
+
     
