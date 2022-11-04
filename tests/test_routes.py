@@ -7,7 +7,7 @@ def test_get_all_journals_with_empty_db_returns_empty_list(client):
     assert response.status_code == 200
     assert response_body == []
 
-def test_get_one_book(client, two_saved_journals):
+def test_get_one_book_with_populated_db(client, two_saved_journals):
     #ACT
     response = client.get("/journal/1")
     response_body = response.get_json()

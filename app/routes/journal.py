@@ -8,11 +8,6 @@ from .routes_helper import get_one_obj_or_abort, update_given_values, fill_empti
 
 journal_bp = Blueprint("journal_bp" , __name__, url_prefix = "/journal")
 
-#constants: (col names and defaults):
-COL_NAMES = ["design", "sub_design", "cut", "complete", "size", "dye", "dye_gradient"]
-COL_DEFAULTS = [None, "", True, True, 'A6', 'canyon tan', False]
-COL_NAME_DEFAULT_DICT = dict(zip(COL_NAMES, COL_DEFAULTS))
-
 @journal_bp.route("", methods = [ "POST"])
 def create_journal():
     
@@ -69,7 +64,7 @@ def update_journal(journal_id):
 
 @journal_bp.route("/<journal_id>", methods = ["DELETE"])
 def delete_journal(journal_id):
-    journal = validate_journal(journal_id)
+    journal = get_one_obj_or_abort(journal_id)
     db.session.delete(journal)
     db.session.commit()
 
