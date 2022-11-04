@@ -1,16 +1,21 @@
 from flask import jsonify, abort, make_response
 
+#constants: (col names and defaults):
+COL_NAMES = ["design", "sub_design", "cut", "complete", "size", "dye", "dye_gradient"]
+COL_DEFAULTS = [None, "", True, True, 'A6', 'canyon tan', False]
+COL_NAME_DEFAULT_DICT = dict(zip(COL_NAMES, COL_DEFAULTS))
+
 def get_one_obj_or_abort(cls, obj_id):
     try:
         obj_id = int(obj_id)
     except:
-        response_str = f"Journal {obj_id} invalid"
+        response_str = f"{cls.__name__} {obj_id} invalid"
         abort(make_response({"message": response_str}, 400))
 
     matching_obj = cls.query.get(obj_id)
 
     if not matching_obj:
-        response_str = f"Journal {obj_id} not found"
+        response_str = f"{cls.__name__} {obj_id} not found"
         abort(make_response({"message":response_str}, 404))
 
     return matching_obj
