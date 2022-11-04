@@ -17,9 +17,9 @@ def create_journal():
     
     request_body = request.get_json()
 
-    dict_of_field_values = fill_empties_with_defaults(request_body)
+    data_dict = fill_empties_with_defaults(request_body)
     
-    new_journal = make_new_journal(dict_of_field_values)
+    new_journal = Journal.from_dict(data_dict)
 
     db.session.add(new_journal)
     db.session.commit()
@@ -45,17 +45,13 @@ def read_all_journals():
         #**fake_dict)  #this will splat out the dict!!!!
     else:
         journals = Journal.query.all()
-    
-    response = []
-    for journal in journals:
-        journal_dict = journal.make_journal_dict()
-        response.append(journal_dict)
+    response = [journal.to_dict() for journal in journals]
     return jsonify(response), 200  
 
 @journal_bp.route("/<journal_id>", methods = ["GET"])
 def get_one_journal(journal_id):
     journal = validate_journal(journal_id)
-    journal_dict = journal.make_journal_dict()
+    journal_dict = journal.to_dict()
     return journal_dict, 200
 
 #make put or patch!
@@ -63,12 +59,11 @@ def get_one_journal(journal_id):
 def update_journal(journal_id):
     journal = validate_journal(journal_id)
     request_body = request.get_json()
-            
     journal = update_given_values(journal, request_body)
-
     db.session.commit()
     #the 200 might need to be inside the parens.
     return make_response(f"Journal #{journal_id} successfully updated"), 200
+#make a side thing that will deal with 404s if it's not found!!
 
 
 @journal_bp.route("/<journal_id>", methods = ["DELETE"])
@@ -92,21 +87,10 @@ def validate_journal(journal_id):
 
     return journal
 
-#put this in model.journal as a method on the class.  Journal.make_new_journal ??(is this possible?)
-def make_new_journal(dict_of_field_values):
-    new_journal = Journal(
-        design = dict_of_field_values["design"],
-        sub_design = dict_of_field_values["sub_design"],
-        cut = dict_of_field_values["cut"],
-        complete = dict_of_field_values["complete"],
-        size = dict_of_field_values["size"],
-        dye = dict_of_field_values["dye"],
-        dye_gradient = dict_of_field_values["dye_gradient"]
-    )
-    return new_journal
+
 
 def fill_empties_with_defaults(request_body):
-    #go through entered fields: if it has an entry, use that, if not, use the default.
+    """go through entered fields: if it has an entry, use that, if not, use the default."""
     
     journal_dict = {}
     for field, default in COL_NAME_DEFAULT_DICT.items():
@@ -118,6 +102,7 @@ def fill_empties_with_defaults(request_body):
 
     return journal_dict
 
+#can i make this a method for tasks?
 def update_given_values(journal, request_body):
     """this updates the values given by request_body, and keeps the other values the same that aren't provided."""
     #is there a way to make this a loop?

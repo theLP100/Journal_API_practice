@@ -16,8 +16,10 @@ class Journal(db.Model):
     dye = db.Column(db.String, default = "canyon tan")
     dye_gradient = db.Column(db.Boolean, default = False)
 
-    def make_journal_dict(self):
+    def to_dict(self):
         """given a journal, return a dictionary with all the info for that journal."""
+        #figure out how this works with not everything there. 
+        #work out how to fill in empties with defaults HERE. in the class method. 
         journal_dict = {
                 "id" : self.id,
                 "design" : self.design,
@@ -29,5 +31,18 @@ class Journal(db.Model):
                 "dye_gradient": self.dye_gradient
             }
         return journal_dict
+
+    @classmethod  #this tags it saying it's a class method. 
+    def from_dict(cls, data_dict):   #we'll initialize a new class object.
+        #add an if statement to handle empties, or include the fill empties with default call here.
+        new_object = cls(design = data_dict["design"],
+        sub_design = data_dict["sub_design"],
+        cut = data_dict["cut"],
+        complete = data_dict["complete"],
+        size = data_dict["size"],
+        dye = data_dict["dye"],
+        dye_gradient = data_dict["dye_gradient"])
+        return new_object
+        #add an else statement to return 404 if not enough info is given.
 
 

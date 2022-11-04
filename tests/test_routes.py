@@ -48,3 +48,14 @@ def test_post_one_journal_creates_one_journal_with_new_id_in_db(client, two_save
     #Assert
     assert response.status_code == 201
     assert response_body == {"id": 3}
+
+#make a test for GET route returning 404 if id not there
+
+#make a test for GET route retuning 400 if invalid input
+
+#make a test for PUT/PATCH route returning 404 if id not there
+
+#make a test for PUT/PATCH route retuning 400 if invalid input
+
+#make responses have a consistent format (look at my task_route project for ideas on this. )
+
