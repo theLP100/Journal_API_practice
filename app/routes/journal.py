@@ -4,6 +4,7 @@ from textwrap import fill
 from flask import Blueprint, jsonify, abort, make_response, request
 from app import db
 from app.models.journal import Journal
+from .routes_helper import get_one_obj_or_abort, update_given_values, fill_empties_with_defaults
 
 journal_bp = Blueprint("journal_bp" , __name__, url_prefix = "/journal")
 
@@ -50,14 +51,14 @@ def read_all_journals():
 
 @journal_bp.route("/<journal_id>", methods = ["GET"])
 def get_one_journal(journal_id):
-    journal = validate_journal(journal_id)
+    journal = get_one_obj_or_abort(Journal, journal_id)
     journal_dict = journal.to_dict()
     return journal_dict, 200
 
 #make put or patch!
 @journal_bp.route("/<journal_id>", methods = ["PUT", "PATCH"])
 def update_journal(journal_id):
-    journal = validate_journal(journal_id)
+    journal = get_one_obj_or_abort(Journal, journal_id)
     request_body = request.get_json()
     journal = update_given_values(journal, request_body)
     db.session.commit()
@@ -73,64 +74,5 @@ def delete_journal(journal_id):
     db.session.commit()
 
     return make_response(f"Journal #{journal_id} successfully deleted"), 200
-
-def validate_journal(journal_id):
-    try:
-        journal_id = int(journal_id)
-    except:
-        response_str = f"Journal {journal_id} invalid"
-        abort(make_response({"message": response_str}, 400))
-    journal = Journal.query.get(journal_id)
-    if not journal:
-        response_str = f"Journal {journal_id} not found"
-        abort(make_response({"message":response_str}, 404))
-
-    return journal
-
-
-
-def fill_empties_with_defaults(request_body):
-    """go through entered fields: if it has an entry, use that, if not, use the default."""
-    
-    journal_dict = {}
-    for field, default in COL_NAME_DEFAULT_DICT.items():
-        
-        if field not in request_body:
-            journal_dict[field] = default
-        else:
-            journal_dict[field] = request_body[field]
-
-    return journal_dict
-
-#can i make this a method for tasks?
-def update_given_values(journal, request_body):
-    """this updates the values given by request_body, and keeps the other values the same that aren't provided."""
-    #is there a way to make this a loop?
-    #if <field> in request_body, journal.field = request_body['field']
-
-    # for field in COL_NAMES:
-    #     if field in request_body:
-    if "design" in request_body:
-        journal.design = request_body["design"]
-
-    if "sub_design" in request_body:
-        journal.sub_design = request_body["sub_design"]
-
-    if "cut" in request_body:
-        journal.cut = request_body["cut"]
-
-    if "complete" in request_body:
-        journal.complete = request_body["complete"]
-
-    if "size" in request_body:
-        journal.size = request_body["size"]
-
-    if "dye" in request_body:
-        journal.dye = request_body["dye"]
-
-    if "dye_gradient" in request_body:
-        journal.dye_gradient = request_body["dye_gradient"]
-    
-    return journal
 
     

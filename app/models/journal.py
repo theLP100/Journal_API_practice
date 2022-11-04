@@ -1,4 +1,5 @@
 from app import db
+from flask import Blueprint, jsonify, abort, make_response
 #from sqlalchemy.sql import func
 
 #book is inheriting from db.Model, 
@@ -34,7 +35,7 @@ class Journal(db.Model):
 
     @classmethod  #this tags it saying it's a class method. 
     def from_dict(cls, data_dict):   #we'll initialize a new class object.
-        #add an if statement to handle empties, or include the fill empties with default call here.
+        #add an if statement to handle empties, or INCLUDE FILL EMPTIES WITH DEFAULTS MAYBE call here.
         new_object = cls(design = data_dict["design"],
         sub_design = data_dict["sub_design"],
         cut = data_dict["cut"],
