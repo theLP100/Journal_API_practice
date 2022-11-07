@@ -1,10 +1,10 @@
 from app import db
-from flask import Blueprint, jsonify, abort, make_response
+from flask import Blueprint
 #from sqlalchemy.sql import func
 
 #book is inheriting from db.Model, 
 class Journal(db.Model):
-    #HOW CAN I GET THESE DAFAULTS TO WORK??????
+    #HOW CAN I GET THESE DAFAULTS TO WORK??????(they don't here, I do it in another place)
     #note: if you don't put a default, it'll go to null. 
     id = db.Column(db.Integer, primary_key = True, autoincrement = True)
     #time_created = db.Column(db.DateTime(timezone = True), server_default = func.now() )

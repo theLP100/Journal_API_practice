@@ -1,6 +1,5 @@
 #todo: make your returns a consistent style. (make_response(jsonify)) perhaps...
 
-from textwrap import fill
 from flask import Blueprint, jsonify, abort, make_response, request
 from app import db
 from app.models.journal import Journal
@@ -10,7 +9,6 @@ journal_bp = Blueprint("journal_bp" , __name__, url_prefix = "/journal")
 
 @journal_bp.route("", methods = [ "POST"])
 def create_journal():
-    
     request_body = request.get_json()
 
     data_dict = fill_empties_with_defaults(request_body)
