@@ -16,11 +16,12 @@ class Journal(db.Model):
     size = db.Column(db.String, default = "A6")
     dye = db.Column(db.String, default = "canyon tan")
     dye_gradient = db.Column(db.Boolean, default = False)
+    #add these once the Salesperson table starts working.
+    salesperson_id = db.Column(db.Integer, db.ForeignKey('salesperson.id'))
+    salesperson = db.relationship("Salesperson", back_populates = "journals")
 
     def to_dict(self):
         """given a journal, return a dictionary with all the info for that journal."""
-        #figure out how this works with not everything there. 
-        #work out how to fill in empties with defaults HERE. in the class method. 
         journal_dict = {
                 "id" : self.id,
                 "design" : self.design,

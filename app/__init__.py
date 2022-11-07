@@ -37,4 +37,7 @@ def create_app(testing = None):
     from .routes.journal import journal_bp
     app.register_blueprint(journal_bp)
 
+    from .routes.salesperson import salesperson_bp
+    app.register_blueprint(salesperson_bp)
+
     return app

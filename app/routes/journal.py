@@ -12,7 +12,7 @@ journal_bp = Blueprint("journal_bp" , __name__, url_prefix = "/journal")
 def create_journal():
     
     request_body = request.get_json()
-
+    #pur in fill_empties wirh defauls in from_dict, maybe?  this is messy having it here.
     data_dict = fill_empties_with_defaults(request_body)
     
     new_journal = Journal.from_dict(data_dict)
