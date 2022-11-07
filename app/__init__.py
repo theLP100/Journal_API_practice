@@ -27,6 +27,7 @@ def create_app(testing = None):
 
     #you have to import this before db.init_app(app)
     from app.models.journal import Journal
+    from app.models.comrade import Comrade
 
     #this is where we connect our database to our application.
     db.init_app(app)
@@ -36,5 +37,8 @@ def create_app(testing = None):
     #make sure Flask knows app functions exist
     from .routes.journal import journal_bp
     app.register_blueprint(journal_bp)
+
+    from .routes.comrade import comrade_bp
+    app.register_blueprint(comrade_bp)
 
     return app
