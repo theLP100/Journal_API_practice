@@ -1,3 +1,6 @@
+#ADD A TEST FOR DELETE.  and more.  that it returns the right message. 
+#make tests for put and patch. 
+
 def test_get_all_journals_with_empty_db_returns_empty_list(client):
     #act
     response = client.get("/journal")

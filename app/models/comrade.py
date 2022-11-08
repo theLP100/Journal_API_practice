@@ -1,4 +1,5 @@
 #this is for comrades, or workers.  anyone who helps selling or making journals, basically.
+#update returns for POST To make more informative message.
 
 from app import db
 from flask import Blueprint

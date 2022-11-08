@@ -14,8 +14,8 @@ class Journal(db.Model):
     cut = db.Column(db.Boolean, default = True)
     complete = db.Column(db.Boolean, default = True)
     size = db.Column(db.String, default = "A6")
-    dye = db.Column(db.String, default = "canyon tan")
-    dye_gradient = db.Column(db.Boolean, default = False)
+    dye = db.Column(db.String, default = "canyon tan")  #consider making this a LIST of colors (for gradients and flags!!)
+    dye_gradient = db.Column(db.Boolean, default = False) #if there is more than one color in the list for dye, make this true! (len(dye))-1 is the val of boolean lol
 
     def to_dict(self):
         """given a journal, return a dictionary with all the info for that journal."""

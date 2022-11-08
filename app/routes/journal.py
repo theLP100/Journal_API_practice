@@ -1,4 +1,5 @@
 #todo: make your returns a consistent style. (make_response(jsonify)) perhaps...
+#update returns for POST To make more informative message.
 
 from flask import Blueprint, jsonify, abort, make_response, request
 from app import db
@@ -62,7 +63,7 @@ def update_journal(journal_id):
 
 @journal_bp.route("/<journal_id>", methods = ["DELETE"])
 def delete_journal(journal_id):
-    journal = get_one_obj_or_abort(journal_id)
+    journal = get_one_obj_or_abort(Journal, journal_id)
     db.session.delete(journal)
     db.session.commit()
 
