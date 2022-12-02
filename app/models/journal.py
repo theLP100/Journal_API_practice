@@ -16,6 +16,9 @@ class Journal(db.Model):
     size = db.Column(db.String, default = "A6")
     dye = db.Column(db.String, default = "canyon tan")  #consider making this a LIST of colors (for gradients and flags!!)
     dye_gradient = db.Column(db.Boolean, default = False) #if there is more than one color in the list for dye, make this true! (len(dye))-1 is the val of boolean lol
+    comrade_id = db.Column(db.Integer, db.ForeignKey('comrade.id')) #could rename this 'who sold it' or 'salesperson'
+    comrade = db.relationship("Comrade", back_populates="journals")
+
 
     def to_dict(self):
         """given a journal, return a dictionary with all the info for that journal."""
@@ -30,6 +33,8 @@ class Journal(db.Model):
                 "size": self.size,
                 "dye": self.dye,
                 "dye_gradient": self.dye_gradient
+                # "comrade_id" : self.comrade_id,
+                # "comrade": self.comrade
             }
         return journal_dict
 
@@ -43,6 +48,8 @@ class Journal(db.Model):
         size = data_dict["size"],
         dye = data_dict["dye"],
         dye_gradient = data_dict["dye_gradient"])
+        # comrade_id = data_dict["comrade_id"],
+        # comrade = data_dict["comrade"])
         return new_object
         #add an else statement to return 404 if not enough info is given.
 
