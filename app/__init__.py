@@ -3,6 +3,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from dotenv import load_dotenv
+from flask_cors import CORS
 import os
 
 #db is an instance of SQLAlchemy class.  this is how we interat with our database.
@@ -16,8 +17,10 @@ load_dotenv()
 def create_app(testing = None):
     # __name__ stores the name of the module we're in
     app = Flask(__name__)
+    CORS(app)
     #configuration is a dictionary: we're setting key-value pairs.
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['CORS_HEADERS'] = 'Content-Type'
     #if the below isn't working, change localhost to 127.0.0.1
     if testing is None:
         app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("SQLALCHEMY_DATABASE_URI")
