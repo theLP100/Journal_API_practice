@@ -17,6 +17,7 @@ class Comrade(db.Model):
         comrade_dict = {
             "id": self.id,
             "name": self.name
+            #journals (update this!)
         }
         return comrade_dict
 

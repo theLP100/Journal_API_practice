@@ -16,8 +16,8 @@ class Journal(db.Model):
     size = db.Column(db.String, default = "A6")
     dye = db.Column(db.String, default = "canyon tan")  #consider making this a LIST of colors (for gradients and flags!!)
     dye_gradient = db.Column(db.Boolean, default = False) #if there is more than one color in the list for dye, make this true! (len(dye))-1 is the val of boolean lol
-    comrade_id = db.Column(db.Integer, db.ForeignKey('comrade.id')) #could rename this 'who sold it' or 'salesperson'
-    comrade = db.relationship("Comrade", back_populates="journals")
+    #comrade_id = db.Column(db.Integer, db.ForeignKey('comrade.id'), nullable = True) #could rename this 'who sold it' or 'salesperson'
+    #comrade = db.relationship("Comrade", back_populates="journals")  #, nullable = True #this didn't work
 
 
     def to_dict(self):

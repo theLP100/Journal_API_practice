@@ -54,6 +54,12 @@ def test_post_one_journal_creates_one_journal_with_new_id_in_db(client, two_save
     assert response_body == {"id": 3}
 
 #make a test for GET route returning 404 if id not there
+def test_get_one_journal_not_found_returns_404(client):
+    response = client.get("/journal/1")
+    response_body = response.get_json()
+    #assert
+    assert response.status_code == 404
+    assert response_body == {"message": "Journal 1 not found"}
 
 #make a test for GET route retuning 400 if invalid input
 
