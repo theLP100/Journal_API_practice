@@ -11,7 +11,7 @@ from flask import Blueprint
 class Comrade(db.Model):
     id = db.Column(db.Integer, primary_key = True, autoincrement = True)
     name = db.Column(db.String, nullable = False)
-    journals = db.relationship("Journal", back_populates="comrade") #aka salesperson
+    #journals = db.relationship("Journal", back_populates="comrade") #aka salesperson
 
     def to_dict(self):
         comrade_dict = {
